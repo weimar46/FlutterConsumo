@@ -15,7 +15,7 @@ class Http {
         var data = jsonDecode(res.body.toString());
         print(data);
       } else {
-        print('falla en la insersion');
+        print('Falla en la inserción');
       }
     } catch (e) {
       print(e.toString());
@@ -40,14 +40,14 @@ TextEditingController iva = TextEditingController();
 
 class _RegistrarState extends State<RegistrarMembresias> {
   // Estados para controlar el color del borde de cada campo de texto
-  Color idMembresiaBorderColor= Colors.grey;
+  Color idMembresiaBorderColor = Colors.grey;
   Color nombreMembresiaBorderColor = Colors.grey;
   Color precioMembresiaBorderColor = Colors.grey;
   Color frecuenciaMembresiaBorderColor = Colors.grey;
   Color fechaInicioBorderColor = Colors.grey;
   Color fechaFinBorderColor = Colors.grey;
   Color ivaBorderColor = Colors.grey;
- 
+
   // Función de validación para permitir solo caracteres alfabéticos
   bool onlyAlphabet(String value) {
     final RegExp regex = RegExp(r'^[a-zA-Z\s]+$');
@@ -144,7 +144,7 @@ class _RegistrarState extends State<RegistrarMembresias> {
               ),
               onChanged: (value) {
                 setState(() {
-                  fechaFinBorderColor =
+                  fechaInicioBorderColor =
                       onlyNumbers(value) ? Colors.green : Colors.red;
                 });
               },
@@ -176,7 +176,7 @@ class _RegistrarState extends State<RegistrarMembresias> {
               ),
               onChanged: (value) {
                 setState(() {
-                  precioMembresiaBorderColor =
+                  ivaBorderColor =
                       onlyNumbers(value) ? Colors.green : Colors.red;
                 });
               },
@@ -184,17 +184,67 @@ class _RegistrarState extends State<RegistrarMembresias> {
             const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () {
-                var usuario = {
-                  "idMembresia": idMembresia.text,
-                  "nombreMembresia": nombreMembresia.text,
-                  "precioMembresia": precioMembresia.text,
-                  "frecuenciaMembresia":frecuenciaMembresia.text,
-                  "fechaInicio": fechaInicio.text,
-                  "fechaFin":fechaFin.text,
-                  "iva":iva.text,
-                };
-                print(usuario);
-                Http.postUsarios(usuario);
+                if (idMembresia.text.isNotEmpty &&
+                    nombreMembresia.text.isNotEmpty &&
+                    precioMembresia.text.isNotEmpty &&
+                    frecuenciaMembresia.text.isNotEmpty &&
+                    fechaInicio.text.isNotEmpty &&
+                    fechaFin.text.isNotEmpty &&
+                    iva.text.isNotEmpty) {
+                  
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Confirmar Registro'),
+                        content: const Text('¿Está seguro de que desea registrar esta membresía?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Cancelar'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              var usuario = {
+                                "idMembresia": idMembresia.text,
+                                "nombreMembresia": nombreMembresia.text,
+                                "precioMembresia": precioMembresia.text,
+                                "frecuenciaMembresia": frecuenciaMembresia.text,
+                                "fechaInicio": fechaInicio.text,
+                                "fechaFin": fechaFin.text,
+                                "iva": iva.text,
+                              };
+                              print(usuario);
+                              Http.postUsarios(usuario);
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Registrar'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Error de validación'),
+                        content: const Text('Por favor, asegúrate de llenar todos los campos.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
               },
               icon: const Icon(Icons.maps_ugc_sharp),
               label: const Text('Registrar'),
@@ -206,4 +256,10 @@ class _RegistrarState extends State<RegistrarMembresias> {
       ),
     );
   }
+}
+
+void main() {
+  runApp(const MaterialApp(
+    home: RegistrarMembresias(),
+  ));
 }

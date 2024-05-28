@@ -170,16 +170,39 @@ class _RegistrarProductoState extends State<RegistrarProducto> {
             const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () {
-                var producto = {
-                  "idProducto": idProducto.text,
-                  "nombreProducto": nombreProducto.text,
-                  "Foto": foto.text,
-                  "stock": stock.text,
-                  "precioEnPesos": precioEnPesos.text,
-                  "precioEnDolares": precioEnDolares.text,
-                };
-                print(producto);
-                Http.postProducto(producto);
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Confirmar Registro"),
+                      content: Text("¿Está seguro de que desea registrar este producto?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text("Cancelar"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            var producto = {
+                              "idProducto": idProducto.text,
+                              "nombreProducto": nombreProducto.text,
+                              "Foto": foto.text,
+                              "stock": stock.text,
+                              "precioEnPesos": precioEnPesos.text,
+                              "precioEnDolares": precioEnDolares.text,
+                            };
+                            print(producto);
+                            Http.postProducto(producto);
+                            Navigator.of(context).pop();
+                          },
+                          child: Text("Registrar"),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
               icon: const Icon(Icons.add),
               label: const Text('Registrar Producto'),

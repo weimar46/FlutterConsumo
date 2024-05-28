@@ -161,7 +161,7 @@ class _RegistrarState extends State<Registrar> {
                 });
               },
             ),
-             const SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: observaciones,
               decoration: InputDecoration(
@@ -172,7 +172,7 @@ class _RegistrarState extends State<Registrar> {
               ),
               onChanged: (value) {
                 setState(() {
-                 observacionesBorderColor = value.isNotEmpty ? Colors.green : Colors.red;
+                  observacionesBorderColor = value.isNotEmpty ? Colors.green : Colors.red;
                 });
               },
             ),
@@ -185,19 +185,42 @@ class _RegistrarState extends State<Registrar> {
                     frecuenciaServicio.text.isNotEmpty &&
                     fechaInicio.text.isNotEmpty &&
                     fechaFin.text.isNotEmpty &&
-                     observaciones.text.isNotEmpty
-                  ) {
-                  var usuario = {
-                    "idServicio": idServicio.text,
-                    "nombreServicio": nombreServicio.text,
-                    "precioServicio": precioServicio.text,
-                    "frecuenciaServicio": frecuenciaServicio.text,
-                    "fechaInicio": fechaInicio.text,
-                    "fechaFin": fechaFin.text,
-                      "observaciones": observaciones.text
-                  };
-                  print(usuario);
-                  Http.postUsuarios(usuario);
+                    observaciones.text.isNotEmpty) {
+                  
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Confirmar Registro'),
+                        content: const Text('¿Está seguro de que desea registrar este servicio?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Cancelar'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              var usuario = {
+                                "idServicio": idServicio.text,
+                                "nombreServicio": nombreServicio.text,
+                                "precioServicio": precioServicio.text,
+                                "frecuenciaServicio": frecuenciaServicio.text,
+                                "fechaInicio": fechaInicio.text,
+                                "fechaFin": fechaFin.text,
+                                "observaciones": observaciones.text,
+                              };
+                              print(usuario);
+                              Http.postUsuarios(usuario);
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text('Registrar'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 } else {
                   showDialog(
                     context: context,
